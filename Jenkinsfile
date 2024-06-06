@@ -1,34 +1,33 @@
-def stepsToRun = [:]
-
 pipeline {
-    agent none
-
+    agent any
     stages {
-        stage ("Prepare Stages"){
+        stage('Build') {
             steps {
-                script {
-                    for (int i = 1; i < 5; i++) {
-                        stepsToRun["Step${i}"] = prepareStage("Step${i}")
-                    }   
-                    parallel stepsToRun
+                sh 'echo "Building the application"'
+                // Add commands to build application
+            }
+        }
+        stage('Test') {
+            parallel {
+                stage('Unit Tests') {
+                    steps {
+                        sh 'sleep 5s'
+                        sh 'echo "Running unit tests"'
+                        // Add commands to run unit tests
+                    }
+                }
+                stage('Integration Tests') {
+                    steps {
+                        sh 'echo "Running integration tests"'
+                        // Add commands to run integration tests
+                    }
                 }
             }
         }
-    }
-}
-
-def prepareStage(def name) {
-    return {
-        stage (name) {
-            stage("1") {
-                echo "start 1"
-                sleep 1
-                echo "done 1"
-            }
-            stage("2") {
-                echo "start 2"
-                sleep 1
-                echo "done 2"
+        stage('Deploy') {
+            steps {
+                sh 'echo "Deploying the application"'
+                // Add commands to deploy application
             }
         }
     }
